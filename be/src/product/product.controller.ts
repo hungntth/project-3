@@ -11,7 +11,6 @@ import { UserRole } from '../user/entities/user.entity';
 import { memoryStorage } from 'multer';
 
 @Controller('products')
-@UseGuards(JwtAuthGuard)
 export class ProductController {
   constructor(
     private readonly productService: ProductService,
@@ -19,7 +18,7 @@ export class ProductController {
   ) {}
 
   @Post('upload')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
   @UseInterceptors(
     FilesInterceptor('images', 5, {
@@ -51,7 +50,7 @@ export class ProductController {
   }
 
   @Post()
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
   async create(@Body() createProductDto: CreateProductDto) {
     return await this.productService.create(createProductDto);
@@ -68,14 +67,14 @@ export class ProductController {
   }
 
   @Put(':id')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
   async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return await this.productService.update(+id, updateProductDto);
   }
 
   @Delete(':id')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
   async remove(@Param('id') id: string) {
     await this.productService.remove(+id);

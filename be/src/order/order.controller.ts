@@ -19,23 +19,29 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../user/entities/user.entity';
 
 @Controller('orders')
-@UseGuards(JwtAuthGuard)
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post()
-  @UseGuards(RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.MANAGER)
   create(@Body() createOrderDto: CreateOrderDto) {
     return this.orderService.create(createOrderDto);
   }
 
+  @Post('admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.MANAGER)
+  createByAdmin(@Body() createOrderDto: CreateOrderDto) {
+    return this.orderService.create(createOrderDto);
+  }
+
   @Get()
+  @UseGuards(JwtAuthGuard)
   findAll() {
     return this.orderService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
     return this.orderService.findOne(+id);
   }

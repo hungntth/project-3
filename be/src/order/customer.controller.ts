@@ -17,36 +17,42 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../user/entities/user.entity';
 
 @Controller('customers')
-@UseGuards(JwtAuthGuard)
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
   @Post()
-  @UseGuards(RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.MANAGER)
   create(@Body() createCustomerDto: CreateCustomerDto) {
     return this.customerService.create(createCustomerDto);
   }
 
+  @Post('admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.MANAGER)
+  createByAdmin(@Body() createCustomerDto: CreateCustomerDto) {
+    return this.customerService.create(createCustomerDto);
+  }
+
   @Get()
+  @UseGuards(JwtAuthGuard)
   findAll() {
     return this.customerService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
     return this.customerService.findOne(+id);
   }
 
   @Patch(':id')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
   update(@Param('id') id: string, @Body() updateCustomerDto: UpdateCustomerDto) {
     return this.customerService.update(+id, updateCustomerDto);
   }
 
   @Delete(':id')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
   remove(@Param('id') id: string) {
     return this.customerService.remove(+id);

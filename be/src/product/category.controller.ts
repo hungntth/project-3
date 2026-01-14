@@ -8,12 +8,11 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../user/entities/user.entity';
 
 @Controller('categories')
-@UseGuards(JwtAuthGuard)
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     return await this.categoryService.create(createCategoryDto);
@@ -24,20 +23,25 @@ export class CategoryController {
     return await this.categoryService.findAll();
   }
 
+  @Get('public')
+  async findAllPublic() {
+    return await this.categoryService.findAll();
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.categoryService.findOne(+id);
   }
 
   @Patch(':id')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
   async update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
     return await this.categoryService.update(+id, updateCategoryDto);
   }
 
   @Delete(':id')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
   async remove(@Param('id') id: string) {
     return await this.categoryService.remove(+id);
